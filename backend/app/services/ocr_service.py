@@ -30,6 +30,7 @@ TESSERACT_PATHS = [
 ]
 
 # Check for custom Tesseract path in environment variable
+tesseract_found = False
 custom_tesseract_path = os.getenv("TESSERACT_PATH")
 if custom_tesseract_path and os.path.exists(custom_tesseract_path):
     pytesseract.pytesseract.tesseract_cmd = custom_tesseract_path
