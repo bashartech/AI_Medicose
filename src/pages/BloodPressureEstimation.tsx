@@ -57,7 +57,7 @@ export default function BloodPressureEstimation() {
     try {
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 60000)
-      const response = await fetch("http://localhost:8000/api/v1/bp/estimate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ frames: framesRef.current, duration: 30 }), signal: controller.signal })
+      const response = await fetch("https://bashartc14-bt-medai.hf.space/api/v1/bp/estimate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ frames: framesRef.current, duration: 30 }), signal: controller.signal })
       clearTimeout(timeoutId)
       const data = await response.json()
       if (!response.ok) throw new Error(data.detail || "Failed to estimate blood pressure")
