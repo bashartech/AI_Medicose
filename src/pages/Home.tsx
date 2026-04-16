@@ -21,16 +21,16 @@ import {
 import { useState, useEffect, useRef } from "react"
 
 const agents = [
-  { name: "Cardiologist", icon: <FaHeartbeat size={28} />, link: "/chat?agent=cardiologist-specialist", specialty: "Cardiology", desc: "Heart & cardiovascular care", exp: "15+ years" },
-  { name: "Dermatologist", icon: <FaSpa size={28} />, link: "/chat?agent=dermatologist-specialist", specialty: "Dermatology", desc: "Skin, hair & nail care", exp: "12+ years" },
-  { name: "ENT Specialist", icon: <FaAssistiveListeningSystems size={28} />, link: "/chat?agent=ent-specialist", specialty: "ENT", desc: "Ear, nose & throat", exp: "10+ years" },
-  { name: "Eye Specialist", icon: <FaEye size={28} />, link: "/chat?agent=eye-specialist", specialty: "Ophthalmology", desc: "Vision & eye care", exp: "14+ years" },
-  { name: "Orthopedic", icon: <FaXRay size={28} />, link: "/chat?agent=orthopedic-specialist", specialty: "Orthopedics", desc: "Bones & joints", exp: "16+ years" },
-  { name: "Dentist", icon: <FaTooth size={28} />, link: "/chat?agent=dentist-specialist", specialty: "Dental", desc: "Oral health care", exp: "11+ years" },
-  { name: "Pediatrician", icon: <FaBaby size={28} />, link: "/chat?agent=pediatrician-specialist", specialty: "Pediatrics", desc: "Child health", exp: "13+ years" },
-  { name: "Pharmacy", icon: <FaPrescriptionBottle size={28} />, link: "/chat?agent=pharmacy-assistant", specialty: "Pharmacy", desc: "Medication guidance", exp: "9+ years" },
-  { name: "Nutritionist", icon: <FaApple size={28} />, link: "/chat?agent=nutritionist-specialist", specialty: "Nutrition", desc: "Diet & wellness", exp: "10+ years" },
-  { name: "General Physician", icon: <FaUserMd size={28} />, link: "/chat?agent=general-physician", specialty: "General", desc: "Primary care", exp: "18+ years" },
+  { name: "Cardiologist", icon: <FaHeartbeat size={28} />, link: "/chat?agent=cardiologist-specialist", specialty: "Cardiology", desc: "Heart & cardiovascular care", exp: "15+ years", image:"/cardio.jpg" },
+  { name: "Dermatologist", icon: <FaSpa size={28} />, link: "/chat?agent=dermatologist-specialist", specialty: "Dermatology", desc: "Skin, hair & nail care", exp: "12+ years", image:"/dermata.jpg" },
+  { name: "ENT Specialist", icon: <FaAssistiveListeningSystems size={28} />, link: "/chat?agent=ent-specialist", specialty: "ENT", desc: "Ear, nose & throat", exp: "10+ years", image:"/ent.avif" },
+  { name: "Eye Specialist", icon: <FaEye size={28} />, link: "/chat?agent=eye-specialist", specialty: "Ophthalmology", desc: "Vision & eye care", exp: "14+ years", image:"/eye.avif" },
+  { name: "Orthopedic", icon: <FaXRay size={28} />, link: "/chat?agent=orthopedic-specialist", specialty: "Orthopedics", desc: "Bones & joints", exp: "16+ years", image:"/ortho.jpg" },
+  { name: "Dentist", icon: <FaTooth size={28} />, link: "/chat?agent=dentist-specialist", specialty: "Dental", desc: "Oral health care", exp: "11+ years", image:"/dentist.png" },
+  { name: "Pediatrician", icon: <FaBaby size={28} />, link: "/chat?agent=pediatrician-specialist", specialty: "Pediatrics", desc: "Child health", exp: "13+ years", image:"/pedi.jpg" },
+  { name: "Pharmacy", icon: <FaPrescriptionBottle size={28} />, link: "/chat?agent=pharmacy-assistant", specialty: "Pharmacy", desc: "Medication guidance", exp: "9+ years", image:"/pharm.png" },
+  { name: "Nutritionist", icon: <FaApple size={28} />, link: "/chat?agent=nutritionist-specialist", specialty: "Nutrition", desc: "Diet & wellness", exp: "10+ years", image:"/nutri.jpg" },
+  { name: "General Physician", icon: <FaUserMd size={28} />, link: "/chat?agent=general-physician", specialty: "General", desc: "Primary care", exp: "18+ years", image:"/general.webp" },
 ]
 
 const services = [
@@ -446,18 +446,8 @@ export default function Home() {
             {agents.map((agent, i) => (
               <Link key={i} to={agent.link} className="group flex-shrink-0 w-64 sm:w-72 snap-start">
                 <div className="relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200 shadow-soft hover:shadow-medium transition-all duration-500 hover:-translate-y-2">
-                  {/* Image Placeholder with Gradient Overlay */}
-                  <div className="h-36 sm:h-48 bg-gradient-to-br from-blue-100 to-cyan-100 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/80 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                        <div className="text-blue-600">{agent.icon}</div>
-                      </div>
-                    </div>
-                    <div className="absolute top-2 sm:top-4 right-2 sm:right-4 px-2 sm:px-3 py-1 sm:py-1.5 bg-white/90 backdrop-blur-sm rounded-full border border-white/50">
-                      <span className="text-[10px] sm:text-xs font-semibold text-blue-600">{agent.exp}</span>
-                    </div>
-                  </div>
+                  <img src={agent.image} alt="" />
+                 
 
                   {/* Info */}
                   <div className="p-4 sm:p-6">

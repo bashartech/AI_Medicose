@@ -20,7 +20,26 @@ EMERGENCY_PATTERNS = [
     "suicidal", "overdose", "severe burn", "major trauma",
     "coughing blood", "vomiting blood", "seizure",
     "sudden vision loss", "sudden severe headache",
-    "high fever with rash", "stiff neck with fever"
+    "high fever with rash", "stiff neck with fever",
+    # Heart-related emergency patterns (expanded)
+    "pain in heart", "heart pain", "severe chest", "chest tightness",
+    "crushing chest", "radiating pain", "pain radiating",
+    "shortness of breath", "can't catch breath", "gasping",
+    "heart feels", "heavy chest", "pressure in chest",
+    "severe heart", "heart hurting", "heart stabbing",
+    # Severe pain patterns
+    "severe pain", "worst pain", "unbearable pain", "excruciating",
+    "agony", "intense pain", "extreme pain",
+    # Breathing emergencies
+    "struggling to breathe", "hard to breathe", "cannot breathe",
+    "wheezing severely", "lips turning blue",
+    # Neurological emergencies
+    "confusion", "slurred speech", "face drooping", "arm weakness",
+    "sudden numbness", "loss of consciousness",
+    # Other emergencies
+    "passing out", "fainting", "coughing up blood",
+    "black stool", "bloody stool", "severe abdominal",
+    "rigid abdomen", "board-like abdomen"
 ]
 
 URGENT_PATTERNS = [
@@ -29,7 +48,20 @@ URGENT_PATTERNS = [
     "urinary infection", "ear pain", "sore throat with fever",
     "mild allergic reaction", "rash with fever",
     "persistent diarrhea", "dehydration",
-    "moderate headache", "back pain", "joint pain"
+    "moderate headache", "back pain", "joint pain",
+    # Heart-related urgent patterns
+    "mild chest", "palpitations", "rapid heartbeat",
+    "irregular heartbeat", "fluttering", "heart skipping",
+    "dizzy", "lightheaded", "swelling in legs",
+    "short of breath", "breathing difficulty",
+    # Other urgent patterns
+    "burning urination", "blood in urine", "painful urination",
+    "high fever", "stiff neck", "ear discharge",
+    "moderate pain", "constant pain", "worsening pain",
+    "nausea", "vomiting", "loss of appetite",
+    "yellow skin", "yellow eyes", "dark urine",
+    "swollen", "inflammation", "redness",
+    "rash", "hives", "itching"
 ]
 
 # Test recommendations by symptoms
@@ -75,13 +107,27 @@ TEST_RECOMMENDATIONS = {
 def classify_triage(symptoms: str, vital_signs: Dict[str, Any] = None) -> Dict[str, Any]:
     """
     Classify patient symptoms into emergency levels.
+    Uses pattern matching with severity modifiers for accurate triage.
     """
     symptoms_lower = symptoms.lower()
-    
+
+    # Severity modifiers that escalate urgency
+    SEVERE_MODIFIERS = ["severe", "extreme", "intense", "worst", "unbearable", "excruciating", "sudden", "sharp", "crushing", "heavy", "tight"]
+    HAS_SEVERE = any(mod in symptoms_lower for mod in SEVERE_MODIFIERS)
+
     # Check for emergency patterns
     emergency_matches = [p for p in EMERGENCY_PATTERNS if p in symptoms_lower]
     urgent_matches = [p for p in URGENT_PATTERNS if p in symptoms_lower]
-    
+
+    # Escalate to emergency if urgent symptoms + severe modifier
+    if HAS_SEVERE and len(urgent_matches) > 0 and len(emergency_matches) == 0:
+        # Check if symptoms relate to critical organs (heart, brain, breathing)
+        critical_keywords = ["heart", "chest", "breath", "head", "brain", "stroke", "numb", "weakness"]
+        has_critical = any(kw in symptoms_lower for kw in critical_keywords)
+        if has_critical:
+            emergency_matches.extend(urgent_matches)
+            urgent_matches = []
+
     # Check vital signs if provided
     vital_risk = []
     if vital_signs:
@@ -93,33 +139,35 @@ def classify_triage(symptoms: str, vital_signs: Dict[str, Any] = None) -> Dict[s
             vital_risk.append("Abnormal temperature")
         if vital_signs.get("oxygen_saturation", 100) < 92:
             vital_risk.append("Low oxygen saturation")
-    
-    # Determine triage level
+
+    # Determine triage level with nuanced scoring
     if len(emergency_matches) > 0 or len(vital_risk) > 0:
         triage_level = "EMERGENCY"
         urgency = "🚨"
         action = "Seek emergency medical care immediately. Go to the nearest hospital or call emergency services."
-        risk_score = 90
+        risk_score = 85 if len(emergency_matches) == 1 else min(95, 80 + len(emergency_matches) * 5)
     elif len(urgent_matches) > 0:
         triage_level = "URGENT"
         urgency = "⚠️"
         action = "Seek medical attention today. Visit an urgent care clinic or contact your doctor."
-        risk_score = 60
+        risk_score = 55 if HAS_SEVERE else 50
+        if len(urgent_matches) > 1:
+            risk_score = min(70, risk_score + len(urgent_matches) * 5)
     else:
         triage_level = "NORMAL"
         urgency = "✅"
         action = "Schedule a regular appointment with your healthcare provider."
-        risk_score = 30
-    
+        risk_score = 25 if HAS_SEVERE else 15
+
     # Recommend tests based on symptoms
     recommended_tests = []
     for keyword, tests in TEST_RECOMMENDATIONS.items():
         if keyword in symptoms_lower:
             recommended_tests.extend(tests)
-    
-    # Remove duplicates
+
+    # Remove duplicates while preserving order
     recommended_tests = list(dict.fromkeys(recommended_tests))
-    
+
     return {
         "triage_level": triage_level,
         "urgency": urgency,
@@ -128,5 +176,6 @@ def classify_triage(symptoms: str, vital_signs: Dict[str, Any] = None) -> Dict[s
         "emergency_indicators": emergency_matches,
         "urgent_indicators": urgent_matches,
         "vital_risks": vital_risk,
+        "severity_detected": HAS_SEVERE,
         "recommended_tests": recommended_tests[:5]  # Top 5 tests
     }
