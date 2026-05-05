@@ -109,7 +109,7 @@ class ReportTextCleaner:
                 return ReportTextCleaner._parse_with_regex(ocr_text)
             
             genai.configure(api_key=gemini_api_key)
-            model = genai.GenerativeModel('gemini-2.0-flash')
+            model = genai.GenerativeModel('gemini-2.5-flash-lite')
             
             prompt = f"""You are an expert medical report parser. Parse this OCR text from a medical lab report and extract structured data.
 

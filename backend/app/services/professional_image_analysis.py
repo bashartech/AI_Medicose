@@ -36,7 +36,7 @@ class ProfessionalImageAnalysisService:
         
         genai.configure(api_key=gemini_api_key)
         # Use Gemini Pro Vision for image analysis
-        self.vision_model = genai.GenerativeModel('gemini-2.5-flash')
+        self.vision_model = genai.GenerativeModel('gemini-2.5-flash-lite')
     
     async def analyze_medical_image(
         self, 
